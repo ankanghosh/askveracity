@@ -245,7 +245,7 @@ AskVeracity has several limitations to be aware of:
 This project is licensed under the [MIT License](./LICENSE), allowing free use, modification, and distribution with proper attribution.
 
 ## Blog and Additional Resources
-Read our detailed blog post about the project: [AskVeracity: An Agentic Fact-Checking System for Misinformation Detection](https://researchguy.in/anveshak-spirituality-qa-bridging-faith-and-intelligence/)
+Read our detailed blog post about the project: [AskVeracity: An Agentic Fact-Checking System for Misinformation Detection](https://researchguy.in/askveracity-an-agentic-fact-checking-system-for-misinformation-detection/)
 
 ## Acknowledgements
 - Built with [LangGraph](https://github.com/langchain-ai/langgraph) and [Streamlit](https://streamlit.io/)
