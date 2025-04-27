@@ -1,0 +1,96 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+*.log
+logs/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Project specific
+# No data folder
+
+# Streamlit secrets - ignore the actual secrets file
+.streamlit/secrets.toml
+# Track the example file
+!.streamlit/secrets.toml.example
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Large files & models
+*.7z
+*.arrow
+*.bin
+*.bz2
+*.ckpt
+*.ftz
+*.gz
+*.h5
+*.joblib
+*.lfs.*
+*.mlmodel
+*.model
+*.msgpack
+*.npy
+*.npz
+*.onnx
+*.ot
+*.parquet
+*.pb
+*.pickle
+*.pkl
+*.pt
+*.pth
+*.rar
+*.safetensors
+saved_model/**/*
+*.tar.*
+*.tar
+*.tflite
+*.tgz
+*.wasm
+*.xz
+*.zip
+*.zst
+*tfevents*
+
+# Create results directory for performance evaluation outputs
+results/*
+!results/.gitkeep
