@@ -147,6 +147,8 @@ with st.sidebar:
     st.info(
         "This system uses a combination of NLP techniques and LLMs to "
         "extract claims, gather evidence, and classify the truthfulness of statements.\n\n"
+        "**Performance Metrics:** The system achieves **Accuracy** between 50.0% and 57.5% and a **Safety Rate** between 82.5% and 85.0% (the percentage of time the system does not classify information incorrectly). "
+        "These metrics tend to vary with time due to the dynamic nature of information - new content is constantly being generated while older content gets deprioritized by sources.\n\n"
         "**Technical:** Built with Python, Streamlit, LangGraph, and OpenAI, leveraging spaCy for NLP and various APIs for retrieving evidence from diverse sources."
     )
     
@@ -256,8 +258,7 @@ claim_input = st.text_area("",
                          height=100,
                          placeholder=(
                              "Examples: The Eiffel Tower is located in Rome, Italy. "
-                             "Meta recently released its Llama 4 large language model. "
-                             "Justin Trudeau is not the Canadian Prime Minister anymore. "
+                             "Meta released its Llama 4 large language model. "
                              "A recent piece of news."
                          ),
                          key="claim_input_area",

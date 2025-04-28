@@ -2,6 +2,15 @@
 
 All notable changes to the AskVeracity fact-checking and misinformation detection system will be documented in this file.
 
+## [0.4.2] - 2025-04-28
+
+### Added
+- Added performance metrics (Accuracy: 50.0%-57.5%, Safety Rate: 82.5%-85.0%) to app's About section
+
+### Changed
+- Updated claim examples in app.py input placeholder
+- Updated app_screenshot.png to reflect current UI changes
+
 ## [0.4.1] - 2025-04-25
 
 ### Updated

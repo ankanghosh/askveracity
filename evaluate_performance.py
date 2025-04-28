@@ -424,7 +424,7 @@ def create_charts(metrics, output_dir="."):
         plt.savefig(os.path.join(output_dir, 'accuracy_by_class.png'))
         plt.close()  # Close the figure to free memory
         
-        # Plot 2: Safety Rate by class
+        # Plot 2: Safety rate by class
         plt.figure(figsize=(10, 6))
         safety_rates = [metrics['per_class_metrics'][cls]['safety_rate'] for cls in classes]
         
