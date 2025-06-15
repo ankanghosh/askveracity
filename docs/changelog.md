@@ -2,6 +2,29 @@
 
 All notable changes to the AskVeracity fact-checking and misinformation detection system will be documented in this file.
 
+## [0.4.3] - 2025-06-15
+
+### Added
+- Integrated detailed performance tracking for evidence retrieval:
+  - Logged source-wise success/failure counts for `RSS`, `Wikidata`, and `OpenAlex`
+  - Captured confidence scores and processing durations in `agent.py`
+- Added a **Confidence Note** message in the app UI to clarify that the displayed confidence percentage reflects overall verdict certainty, whereas individual evidence may vary in confidence based on source reliability
+
+### Changed
+- Refactored multiple `try-except` blocks in `evidence_retrieval.py` to ensure logging of both successful and failed retrieval attempts
+- Enhanced fallback mechanism for RSS feeds:
+  - AI category now always uses both `AI-specific` and `Technology` RSS feeds
+  - Updated sampling logic to avoid negative values
+- Improved robustness in logging:
+  - Used `.get()` with defaults when accessing dictionary keys in logs to avoid `KeyError`
+- Cleaned up imports across all modules to remove redundancy and optimize performance
+- Moved module-level imports from function body to the top across several files (e.g., `agent.py`, `app.py`, `models.py`)
+- Refactored confidence logging in `truth_classifier()` and `process_claim()` for centralized tracking
+
+### Removed
+- Unused or redundant imports: `langdetect`, `spacy`, `re`, `json`, `ssl`, `sys`, `Timer`, etc.
+- `PerformanceTracker` initialization in files where it is no longer required (`classification.py`, `evaluate_performance.py`)
+
 ## [0.4.2] - 2025-04-28
 
 ### Added
@@ -111,6 +134,7 @@ All notable changes to the AskVeracity fact-checking and misinformation detectio
 
 ### Planned Features
 - Enhanced visualization of evidence relevance
+- Display agent reasoning process for greater transparency
 - Support for user feedback on verification results
 - Streamlined fact-checking using only relevant sources
 - Source weighting for improved result relevance

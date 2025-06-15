@@ -64,7 +64,7 @@ Evidence is collected from multiple sources in parallel (`modules/evidence_retri
    - Extracts titles, abstracts, and publication dates
 
 8. **Category Fallback** mechanism:
-   - For AI claims, falls back to technology sources if insufficient evidence (for RSS feeds)
+   - For AI claims, uses both AI-specific and technology RSS feeds simultaneously
    - For other categories, falls back to default RSS feeds
    - Ensures robust evidence retrieval across related domains
 

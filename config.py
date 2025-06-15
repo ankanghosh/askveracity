@@ -7,9 +7,9 @@ It manages environment variables and file-based configurations.
 """
 
 import os
-import json
 import logging
 from pathlib import Path
+import streamlit as st
 
 # Configure logger
 logger = logging.getLogger("misinformation_detector")
@@ -23,11 +23,10 @@ DATA_DIR.mkdir(exist_ok=True)
 
 # First try to get API keys from Streamlit secrets, then fall back to environment variables
 try:
-    import streamlit as st
     OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY", os.environ.get("OPENAI_API_KEY", ""))
     NEWS_API_KEY = st.secrets.get("NEWS_API_KEY", os.environ.get("NEWS_API_KEY", ""))
     FACTCHECK_API_KEY = st.secrets.get("FACTCHECK_API_KEY", os.environ.get("FACTCHECK_API_KEY", ""))
-except (AttributeError, ImportError):
+except AttributeError:
     # Fall back to environment variables if Streamlit secrets aren't available
     OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
     NEWS_API_KEY = os.environ.get("NEWS_API_KEY", "")

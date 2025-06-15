@@ -89,8 +89,9 @@ Evidence retrieval is a core component of the misinformation detection system:
 
 2. **Category-aware Prioritization:** Sources are prioritized based on the detected category of the claim:
    - Each category (ai, science, technology, politics, business, world, sports, entertainment) has dedicated RSS feeds
-   - AI category falls back to technology sources when needed
+   - AI category always includes both AI-specific and technology RSS feeds
    - Other categories fall back to default RSS feeds
+   - Ensures robust evidence retrieval across related domains
 
 3. **Parallel Processing:** Evidence retrieval uses ThreadPoolExecutor for parallel API requests with optimized timeouts
 

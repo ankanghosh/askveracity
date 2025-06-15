@@ -8,11 +8,11 @@ manages the application lifecycle including initialization and cleanup.
 
 import streamlit as st
 import time
-import json
 import os
 import logging
 import atexit
-import sys
+import ast
+import re
 from pathlib import Path
 
 # Configure logging first, before other imports
@@ -252,7 +252,7 @@ st.markdown("### Enter a claim to verify")
 def on_input_change():
     st.session_state.input_content = st.session_state.claim_input_area
 
-# Input area with callback - key fix here!
+# Input area with callback
 claim_input = st.text_area("", 
                          value=st.session_state.input_content,
                          height=100,
@@ -444,6 +444,9 @@ else:
                 # Add disclaimer about cross-verification
                 st.info("⚠️ **Note:** Please cross-verify important information with additional reliable sources.")
                 
+                # Add confidence interpretation note
+                st.info("💡 **Confidence Note:** The confidence percentage reflects our system's certainty in the overall verdict. Individual pieces of evidence presented in the explanation may reflect different confidence levels based on source reliability and specificity.")
+                
                 if truth_label == "Uncertain":
                     st.info("💡 **Tip for Uncertain Results:** This claim might be too recent for our sources, too specialized, or might not be widely reported or supported with evidence. It is also possible that the claim does not fall into any of these categories and our system may have failed to fetch the correct evidence. Try checking official sites and blogs, news sites, or other related documentation for more information.")
             
@@ -473,7 +476,6 @@ else:
                 if isinstance(evidence, str):
                     # Try to parse string as a list
                     try:
-                        import ast
                         parsed_evidence = ast.literal_eval(evidence)
                         if isinstance(parsed_evidence, list):
                             evidence = parsed_evidence
@@ -519,7 +521,7 @@ else:
                     
                     # Only show evidence tabs if we have evidence
                     if evidence and any(ev for ev in evidence if ev):
-                        # Create tabs for supporting and contradicting evidence only (removed All Evidence tab)
+                        # Create tabs for supporting and contradicting evidence only
                         evidence_tabs = st.tabs(["Supporting Evidence", "Contradicting Evidence", "Source Details"])
                         
                         # Supporting Evidence tab
@@ -564,12 +566,10 @@ else:
                                 source = "Unknown"
                                 # Extract source info from evidence text
                                 if "URL:" in ev:
-                                    import re
                                     url_match = re.search(r'URL: https?://(?:www\.)?([^/]+)', ev)
                                     if url_match:
                                         source = url_match.group(1)
                                 elif "Source:" in ev:
-                                    import re
                                     source_match = re.search(r'Source: ([^,]+)', ev)
                                     if source_match:
                                         source = source_match.group(1)

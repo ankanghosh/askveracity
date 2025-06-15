@@ -11,6 +11,7 @@ import time
 import logging
 import traceback
 import json
+import ast
 from langchain_core.tools import tool
 from langchain.prompts import PromptTemplate
 from langgraph.prebuilt import create_react_agent
@@ -94,6 +95,9 @@ def truth_classifier(query, evidence):
         "confidence": confidence,
         "results": classification_results
     }
+
+    # Log confidence score
+    performance_tracker.log_confidence_score(confidence)
     
     # Convert to JSON string for consistent handling
     return json.dumps(result)
@@ -266,6 +270,14 @@ def process_claim(claim, agent=None, recursion_limit=20):
         # Log performance
         elapsed = time.time() - start_time
         logger.info(f"Claim processed in {elapsed:.2f} seconds")
+
+        # Track processing time and overall success
+        performance_tracker.log_processing_time(start_time)
+        performance_tracker.log_claim_processed()
+        
+        # Track confidence if available
+        if result and "confidence" in result:
+            performance_tracker.log_confidence_score(result["confidence"])
         
         return result
         
@@ -349,7 +361,6 @@ def format_response(response):
                             result["evidence_count"] = len(message.content)
                         elif isinstance(message.content, str) and message.content.startswith("[") and message.content.endswith("]"):
                             try:
-                                import ast
                                 parsed_content = ast.literal_eval(message.content)
                                 if isinstance(parsed_content, list):
                                     result["evidence"] = parsed_content
@@ -372,10 +383,9 @@ def format_response(response):
                     logger.info(f"Truth classifier content type: {type(message.content)}")
                     logger.info(f"Truth classifier content: {message.content}")
                     
-                    # Handle JSON formatted result from truth_classifier
+                    # Handle JSON formatted result from truth_classifier()
                     if isinstance(message.content, str):
                         try:
-                            import json
                             # Parse the JSON string
                             parsed_content = json.loads(message.content)
                             
@@ -416,9 +426,7 @@ def format_response(response):
         if found_tools["evidence_retriever"] and not found_tools["truth_classifier"]:
             logger.info("Truth classifier was not called by the agent, executing fallback classification")
             
-            try:
-                from modules.classification import classify_with_llm, aggregate_evidence
-                
+            try:                
                 # Get the evidence from the results
                 evidence = result["evidence"]
                 claim = result["claim"] or "Unknown claim"
@@ -451,9 +459,7 @@ def format_response(response):
         if (found_tools["truth_classifier"] or result["classification"] != "Uncertain") and not found_tools["explanation_generator"]:
             logger.info("Explanation generator was not called by the agent, using fallback explanation generation")
             
-            try:
-                from modules.explanation import generate_explanation
-                
+            try:                
                 # Get the necessary inputs for explanation generation
                 claim = result["claim"] or "Unknown claim"
                 evidence = result["evidence"]

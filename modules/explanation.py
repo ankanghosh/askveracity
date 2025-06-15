@@ -77,7 +77,7 @@ def generate_explanation(claim, evidence_results, truth_label, confidence=None):
 
         # Prepare evidence text for prompt
         evidence_text = "\n".join([
-            f"Evidence {i+1}: {str(ev)[:200] + '...' if len(str(ev)) > 200 else str(ev)}" 
+            f"Evidence {i+1}: {str(ev)[:200] + '...' if len(str(ev)) > 200 else str(ev)}"
             for i, ev in enumerate(evidence_results[:5])
         ])
 

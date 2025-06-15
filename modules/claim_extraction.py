@@ -1,8 +1,6 @@
 import logging
 import time
 import re
-from langdetect import detect
-import spacy
 
 from utils.performance import PerformanceTracker
 from utils.models import get_nlp_model, get_llm_model

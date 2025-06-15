@@ -1,11 +1,8 @@
 import logging
 import re
 from utils.models import get_llm_model, get_nlp_model
-from utils.performance import PerformanceTracker
 
 logger = logging.getLogger("misinformation_detector")
-
-performance_tracker = PerformanceTracker()
 
 def classify_with_llm(query, evidence):
     """

@@ -5,9 +5,12 @@ import re
 import ssl
 import requests
 from datetime import datetime, timedelta
-from threading import Timer
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import random
+# Import the performance tracker
+from utils.performance import PerformanceTracker
+performance_tracker = PerformanceTracker()
 
 logger = logging.getLogger("misinformation_detector")
 
@@ -124,6 +127,9 @@ def parse_feed(feed_url, timeout=5):
             
     except requests.exceptions.Timeout:
         logger.warning(f"Timeout while fetching feed {feed_url}")
+        return None
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTP error fetching feed {feed_url}: {str(e)}")
         return None
     except requests.exceptions.RequestException as e:
         logger.error(f"Request error fetching feed {feed_url}: {str(e)}")
@@ -333,8 +339,8 @@ def retrieve_evidence_from_rss(claim, max_results=10, category_feeds=None):
             other_feeds = [feed for feed in feeds_to_use if feed not in fact_check_feeds]
             
             # Take all fact-checking feeds plus a random selection of others
-            import random
-            selected_feeds = fact_check_feeds + random.sample(other_feeds, min(10 - len(fact_check_feeds), len(other_feeds)))
+            selected_feeds = fact_check_feeds + random.sample(other_feeds, min(max(0, 10 - len(fact_check_feeds)), len(other_feeds)))
+            
         else:
             selected_feeds = feeds_to_use
             
@@ -401,8 +407,25 @@ def retrieve_evidence_from_rss(claim, max_results=10, category_feeds=None):
         logger.info(f"Retrieved {len(top_entries)} relevant RSS items from {len(feeds)} feeds in {time.time() - start_time:.2f}s")
         
         # Return just the text portion
-        return [entry["text"] for entry in top_entries]
+        rss_results = [entry["text"] for entry in top_entries]
+        
+        # Log evidence retrieval performance
+        success = bool(rss_results)
+        source_count = {"rss": len(rss_results)}
+        try:
+            performance_tracker.log_evidence_retrieval(success, source_count)
+        except Exception as e:
+            logger.error(f"Error logging RSS evidence retrieval: {e}")
+        
+        return rss_results
     
     except Exception as e:
         logger.error(f"Error in RSS retrieval: {str(e)}")
+        
+        # Log failed evidence retrieval
+        try:
+            performance_tracker.log_evidence_retrieval(False, {"rss": 0})
+        except Exception as log_error:
+            logger.error(f"Error logging failed RSS evidence retrieval: {log_error}")
+        
         return []

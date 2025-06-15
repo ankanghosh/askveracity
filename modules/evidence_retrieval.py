@@ -8,11 +8,9 @@ combining evidence to support fact-checking operations.
 
 import logging
 import time
-import re
-import random
 import requests
-import json
 import ssl
+import urllib.request
 from urllib.parse import urlencode
 from bs4 import BeautifulSoup
 from SPARQLWrapper import SPARQLWrapper, JSON
@@ -24,6 +22,7 @@ from utils.models import get_nlp_model
 from modules.claim_extraction import shorten_claim_for_evidence
 from modules.rss_feed import retrieve_evidence_from_rss
 from config import NEWS_API_KEY, FACTCHECK_API_KEY
+from modules.category_detection import get_category_specific_rss_feeds, get_fallback_category, detect_claim_category
 # Import the performance tracker
 from utils.performance import PerformanceTracker
 performance_tracker = PerformanceTracker()
@@ -342,11 +341,7 @@ def retrieve_evidence_from_wikidata(claim):
     sparql.addCustomHttpHeader("User-Agent", "MisinformationDetectionResearchBot/1.0")
     
     # Fix SSL issues by disabling SSL verification for this specific request
-    try:
-        # Create a context where we don't verify SSL certs
-        import ssl
-        import urllib.request
-        
+    try:        
         # Create a context that doesn't verify certificates
         ssl_context = ssl._create_unverified_context()
         
@@ -401,10 +396,26 @@ def retrieve_evidence_from_wikidata(claim):
             wikidata_evidence.append(evidence_text)
 
         logger.info(f"Retrieved {len(wikidata_evidence)} Wikidata entities")
+        
+        # Log evidence retrieval performance
+        success = bool(wikidata_evidence)
+        source_count = {"wikidata": len(wikidata_evidence)}
+        try:
+            performance_tracker.log_evidence_retrieval(success, source_count)
+        except Exception as e:
+            logger.error(f"Error logging Wikidata evidence retrieval: {e}")
+        
         return wikidata_evidence
 
     except Exception as e:
         logger.error(f"Error retrieving from Wikidata: {str(e)}")
+        
+        # Log failed evidence retrieval
+        try:
+            performance_tracker.log_evidence_retrieval(False, {"wikidata": 0})
+        except Exception as log_error:
+            logger.error(f"Error logging failed Wikidata evidence retrieval: {log_error}")
+        
         return []
 
 @api_error_handler("openalex")
@@ -478,10 +489,26 @@ def retrieve_evidence_from_openalex(claim):
             logger.error(f"Unexpected error in OpenAlex request: {str(e)}")
 
         logger.info(f"Retrieved {len(scholarly_evidence)} scholarly papers from OpenAlex")
+       
+        # Log evidence retrieval performance
+        success = bool(scholarly_evidence)
+        source_count = {"openalex": len(scholarly_evidence)}
+        try:
+            performance_tracker.log_evidence_retrieval(success, source_count)
+        except Exception as e:
+            logger.error(f"Error logging OpenAlex evidence retrieval: {e}")
+
         return scholarly_evidence
 
     except Exception as e:
         logger.error(f"Fatal error in OpenAlex retrieval: {str(e)}")
+        
+        # Log failed evidence retrieval
+        try:
+            performance_tracker.log_evidence_retrieval(False, {"openalex": 0})
+        except Exception as log_error:
+            logger.error(f"Error logging failed OpenAlex evidence retrieval: {log_error}")
+        
         return []
 
 @api_error_handler("factcheck")
@@ -702,8 +729,9 @@ def retrieve_news_articles(claim, requires_recent=False):
     news_texts = [item["text"] for item in news_results]
 
     # Log evidence retrieval
+    success = bool(news_texts)
+    source_count = {"news": len(news_texts)}
     try:
-        success = bool(news_texts)
         performance_tracker.log_evidence_retrieval(success, source_count)
     except Exception as log_error:
         logger.error(f"Error logging evidence retrieval: {log_error}")
@@ -736,12 +764,9 @@ def retrieve_combined_evidence(claim):
     logger.info(f"Starting evidence retrieval for: {claim}")
     start_time = time.time()
 
-    # Use the category detector to identify the claim category
-    from modules.category_detection import get_category_specific_rss_feeds, get_fallback_category, detect_claim_category
-
     # Extract key claim components for relevance matching
     claim_components = extract_claim_components(claim)
-    logger.info(f"Extracted claim components: entities={claim_components['entities']}, verbs={claim_components['verbs']}")
+    logger.info(f"Extracted claim components: entities={claim_components.get('entities', [])}, verbs={claim_components.get('verbs', [])}")
     
     # Determine if claim has temporal attributes
     requires_recent_evidence = bool(claim_components.get("temporal_words", []))

@@ -93,7 +93,7 @@ askveracity/
 ## Claim Verification Process
 
 1. **Claim Extraction:** The system extracts the main factual claim from user input
-2. **Category Detection:** The claim is categorized (AI, science, technology, politics, business, world, sports, entertainment)
+2. **Category Detection:** The claim is categorized (ai, science, technology, politics, business, world, sports, entertainment)
 3. **Evidence Retrieval:** Evidence is gathered from multiple sources with category-specific prioritization
 4. **Evidence Analysis:** Evidence relevance is assessed using entity and verb matching
 5. **Classification:** A weighted evaluation determines the verdict with confidence score
@@ -224,10 +224,11 @@ Developers should update the claims in `evaluate_performance.py` to use fresh, r
 - **Refined Relevance Scoring:** Implemented weighted scoring with entity and verb matching with keyword fallback for accurate evidence relevance assessment during classification
 - **Enhanced Evidence Relevance:** Improved entity and verb matching with weighted scoring prioritization and increased evidence gathering from 5 to 10 items
 - **Streamlined Architecture:** Removed source credibility and semantic analysis complexity for improved maintainability
-- **Category-Specific Fallbacks:** AI claims fall back to technology sources; other categories fall back to default RSS feeds
+- **Category-Specific Fallbacks:** AI claims use both AI-specific and technology sources; other categories fall back to default RSS feeds
 - **OpenAlex Integration:** Replaced Semantic Scholar with OpenAlex for academic evidence
 - **Improved User Experience:** Enhanced claim processing and result presentation
 - **Better Robustness:** Improved handling of specialized topics and novel terms
+- **Confidence Clarity Note:** Added UI message to explain how overall and individual evidence confidence can differ
 
 ## Limitations
 

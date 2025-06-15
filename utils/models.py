@@ -11,6 +11,8 @@ import logging
 import functools
 from langchain_openai import ChatOpenAI
 import spacy
+import subprocess
+import sys
 
 logger = logging.getLogger("misinformation_detector")
 
@@ -84,8 +86,6 @@ def initialize_models():
             logger.warning(f"Could not load spaCy model: {str(e)}")
             logger.info("Attempting to download spaCy model...")
             try:
-                import subprocess
-                import sys
                 # This downloads the model if it's missing
                 subprocess.check_call([sys.executable, "-m", "spacy", "download", "en_core_web_sm"])
                 # Try loading again

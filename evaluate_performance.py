@@ -23,15 +23,13 @@ import argparse
 from datetime import datetime
 import matplotlib.pyplot as plt
 from tabulate import tabulate
-import numpy as np
 
 # Add the parent directory to sys.path if this script is run directly
 if __name__ == "__main__":
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Import the agent and performance tracker
+# Import the agent
 import agent
-from utils.performance import PerformanceTracker
 from utils.models import initialize_models
 
 # IMPORTANT NOTE FOR DEVELOPERS:
@@ -193,8 +191,6 @@ def evaluate_claims(test_claims, eval_agent, limit=None):
             - results (list): Detailed results for each claim
             - metrics (dict): Aggregated performance metrics
     """
-    # Initialize performance tracker
-    performance_tracker = PerformanceTracker()
     
     # Limit the number of claims if requested
     if limit and limit > 0:
@@ -499,7 +495,6 @@ def main():
     
     # Evaluate claims
     results, metrics = evaluate_claims(TEST_CLAIMS, eval_agent, args.limit)
-    # results, metrics = evaluate_claims(TEST_CLAIMS, eval_agent, 1)
     
     # Print summary
     print_summary(metrics)
@@ -508,13 +503,7 @@ def main():
     save_results(results, metrics, output_file)
     
     # Create charts
-    try:
-        from tabulate import tabulate
-        import matplotlib.pyplot as plt
-        create_charts(metrics, results_dir)
-    except ImportError:
-        print("\nCould not create charts. Please install matplotlib and tabulate packages:")
-        print("pip install matplotlib tabulate")
+    create_charts(metrics, results_dir)
 
 if __name__ == "__main__":
     main()

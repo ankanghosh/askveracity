@@ -1,8 +1,5 @@
 import logging
-import re
-from typing import Tuple, List, Dict, Optional
-import os
-import time
+from typing import Tuple, List, Optional
 
 # Set up logging
 logger = logging.getLogger("misinformation_detector")
