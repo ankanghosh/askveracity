@@ -222,7 +222,7 @@ with st.sidebar:
     st.markdown("### Feedback")
     st.success(
         "AskVeracity is evolving and we welcome your feedback to help us improve. "
-        "Please reach out to us with questions, suggestions, or concerns."
+        "Please reach out to us with questions, suggestions, or concerns at ankanatwork@gmail.com."
     )
 
 # Initialize session state variables
